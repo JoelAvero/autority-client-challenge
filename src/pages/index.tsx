@@ -1,7 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
+import type { NextPage } from "next";
+import Head from "next/head";
 
-import styles from '../styles/Home.module.css'
+import styles from "../styles/Home.module.css";
+import Counter from "../features/counter-reference-redux/Counter";
 
 const IndexPage: NextPage = () => {
   return (
@@ -14,8 +15,11 @@ const IndexPage: NextPage = () => {
           Edit <code>src/App.tsx</code> for your logic
         </p>
       </header>
+      <div>
+        <Counter />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default IndexPage
+export default IndexPage;
