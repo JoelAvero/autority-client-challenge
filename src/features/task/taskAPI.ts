@@ -39,7 +39,7 @@ export async function updateTask(task: Task): Promise<string> {
 }
 
 export async function deleteTask(id: number): Promise<string> {
-  const response = await fetch(`/api/task/${id}`, {
+  const response = await fetch(`http://localhost:4000/tasks/${id}`, {
     method: "DELETE",
   });
   const deletedTask = await response.json();

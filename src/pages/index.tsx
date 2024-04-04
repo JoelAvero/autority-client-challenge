@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { Task } from "../types";
+import TaskList from "../features/task/TaskList";
 
 const IndexPage: NextPage = () => {
   const dispatch = useAppDispatch();
@@ -46,18 +47,7 @@ const IndexPage: NextPage = () => {
             <title>Autority Challenge</title>
           </Head>
           <header className={styles.header}>
-            {tasks.map((task) => (
-              <Link
-                href={`/task/${task.id}`}
-                key={task.id}
-                onClick={() => {
-                  dispatch(addTask(task));
-                }}
-              >
-                {task.name}
-              </Link>
-            ))}
-            <Link href="/task">task</Link>
+            <TaskList tasks={tasks} />
           </header>
           <div>
             <Counter />

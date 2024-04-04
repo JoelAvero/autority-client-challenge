@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { Task, TaskState } from "../../types";
-import { fetchTask, fetchTasks } from "./taskAPI";
+import { deleteTask, fetchTask, fetchTasks } from "./taskAPI";
 import { AppState } from "../../app/store";
 
 const initialState: TaskState = {
@@ -42,13 +42,13 @@ export const fetchTaskAsync = createAsyncThunk(
 //   }
 // );
 
-// export const deleteTodoAsync = createAsyncThunk(
-//   "todo/deleteTodo",
-//   async (id: string) => {
-//     await deleteTodo(id);
-//     return id;
-//   }
-// );
+export const deleteTaskAsync = createAsyncThunk(
+  "task/deleteTask",
+  async (id: number) => {
+    await deleteTask(id);
+    return id;
+  }
+);
 
 export const taskSlice = createSlice({
   name: "task",
@@ -74,6 +74,9 @@ export const taskSlice = createSlice({
       .addCase(fetchTaskAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.task = action.payload;
+      })
+      .addCase(deleteTaskAsync.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       });
   },
 });

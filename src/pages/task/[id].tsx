@@ -19,7 +19,7 @@ const index = (props: Props) => {
   const router = useRouter();
   const { id } = router.query;
 
-  const [task, setTask] = useState<Task | undefined>(undefined);
+  // const [task, setTask] = useState<Task | undefined>(undefined);
 
   const status = useAppSelector(selectTasksStatus);
   const taskFromStore = useAppSelector(selectTask);
@@ -30,9 +30,9 @@ const index = (props: Props) => {
     }
   }, [dispatch, router]);
 
-  useEffect(() => {
-    setTask(taskFromStore);
-  }, [status]);
+  // useEffect(() => {
+  //   setTask(taskFromStore);
+  // }, [status]);
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -44,15 +44,11 @@ const index = (props: Props) => {
 
   return (
     <>
-      {task ? (
+      {taskFromStore && (
         <div>
-          <h1>{task.name}</h1>
-          <p>{task.description}</p>
           <Link href="/">Home</Link>
-          <Form task={task} />
+          <Form task={taskFromStore} />
         </div>
-      ) : (
-        <h1>error</h1>
       )}
     </>
   );
