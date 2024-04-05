@@ -1,37 +1,88 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CreateTask, Task } from "../../types";
 import {
-  Button,
   Form,
   FormControl,
   FormGroup,
   FormLabel,
   FormText,
 } from "react-bootstrap";
+import styles from "./task.module.scss";
+import Button from "../../components/Button";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  createTaskAsync,
+  fetchTaskAsync,
+  fetchTasksAsync,
+  selectCreateStatus,
+  selectUpdateStatus,
+  updateTaskAsync,
+} from "./taskSlice";
+import { useRouter } from "next/router";
 
 type Props = {
   task: Task | CreateTask;
 };
 
 const TaskForm = ({ task }: Props) => {
-  const [newTask, setNewTask] = React.useState<Task | CreateTask>(task);
-  const [error, setError] = React.useState<string>("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const createStatus = useAppSelector(selectCreateStatus);
+  const updateStatus = useAppSelector(selectUpdateStatus);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [newTask, setNewTask] = useState<Task | CreateTask>(task);
+  const [validated, setValidated] = useState(false);
+  const [actionCompleted, setActionCompleted] = useState(false);
+
+  const actionType = "id" in task ? "EDIT" : "CREATE";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const form = e.currentTarget;
 
-    if ("id" in task) {
-      console.log("edit");
+    if (form.checkValidity() === false) {
+      setValidated(true);
+      return;
     } else {
-      console.log("create");
+      if (actionType === "EDIT") {
+        await dispatch(updateTaskAsync(newTask as Task));
+        dispatch(fetchTasksAsync());
+      } else {
+        await dispatch(createTaskAsync(newTask as CreateTask));
+      }
+      setActionCompleted(true);
     }
   };
 
+  useEffect(() => {
+    if (actionCompleted && createStatus === "idle") {
+      router.push("/");
+    }
+  }, [createStatus]);
+
+  useEffect(() => {
+    if (actionCompleted && updateStatus === "idle") {
+      router.push("/");
+    }
+  }, [updateStatus]);
+
+  if (createStatus === "failed" || updateStatus === "failed") {
+    return <div>Error when {actionType} task, please refresh</div>;
+  }
+
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form
+      noValidate
+      validated={validated}
+      className={styles.form}
+      onSubmit={handleSubmit}
+    >
+      <h1 className={styles.form__title}>{actionType} TASK</h1>
+
       <FormGroup className="mb-3" controlId="name">
-        <FormLabel>Name</FormLabel>
+        <FormLabel className={styles.form__label}>Name</FormLabel>
         <FormControl
+          required
           type="name"
           name="name"
           placeholder="Write some name for the task"
@@ -40,14 +91,13 @@ const TaskForm = ({ task }: Props) => {
             setNewTask({ ...newTask, name: e.target.value });
           }}
         />
-        {error && (
-          <FormText className="text-muted">name field is required</FormText>
-        )}
+        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
       </FormGroup>
 
-      <FormGroup className="mb-3" controlId="description">
-        <FormLabel>Description</FormLabel>
+      <FormGroup className="" controlId="description">
+        <FormLabel className={styles.form__label}>Description</FormLabel>
         <FormControl
+          required
           as="textarea"
           name="description"
           rows={3}
@@ -58,16 +108,13 @@ const TaskForm = ({ task }: Props) => {
             setNewTask({ ...newTask, description: e.target.value });
           }}
         />
-        {error && (
-          <FormText className="text-muted">
-            description field is required
-          </FormText>
-        )}
+        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
       </FormGroup>
 
-      <FormGroup className="mb-3" controlId="author">
-        <FormLabel>Author</FormLabel>
+      <FormGroup className="" controlId="author">
+        <FormLabel className={styles.form__label}>Author</FormLabel>
         <FormControl
+          required
           type="text"
           name="author"
           placeholder="Enter your name"
@@ -76,13 +123,11 @@ const TaskForm = ({ task }: Props) => {
             setNewTask({ ...newTask, author: e.target.value });
           }}
         />
-        {error && (
-          <FormText className="text-muted">author field is required</FormText>
-        )}
+        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
       </FormGroup>
 
-      <Button variant="primary" type="submit">
-        Submit
+      <Button className={styles.form__button} variant="primary" type="submit">
+        {actionType}
       </Button>
     </Form>
   );

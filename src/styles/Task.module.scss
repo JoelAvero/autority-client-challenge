@@ -1,0 +1,12 @@
+.task__container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.task__link {
+  width: 100%;
+}

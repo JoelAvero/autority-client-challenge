@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, FormCheck } from "react-bootstrap";
 import { Task } from "../../types";
 import styles from "./task.module.scss";
 import dateFormatter from "../../utils/dateFormatter";
 import { GrEdit, GrTrash } from "react-icons/gr";
 import Link from "next/link";
-import { addTask, deleteTaskAsync } from "./taskSlice";
-import { useAppDispatch } from "../../app/hooks";
+import {
+  addTask,
+  deleteTaskAsync,
+  selectDeleteStatus,
+  selectUpdateStatus,
+  updateTaskStatusAsync,
+} from "./taskSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 type Props = {
   task: Task;
@@ -14,6 +20,37 @@ type Props = {
 
 const TaskCard = ({ task }: Props) => {
   const dispatch = useAppDispatch();
+  const updateStatus = useAppSelector(selectUpdateStatus);
+  const deleteStatus = useAppSelector(selectDeleteStatus);
+
+  const [errors, setErrors] = useState({
+    updateError: false,
+    deleteError: false,
+  });
+  const [checked, setChecked] = useState(task.isComplete);
+
+  const handleIsCompleteChange = () => {
+    const taskToUpdate = { ...task, isComplete: !task.isComplete };
+    dispatch(updateTaskStatusAsync(taskToUpdate));
+    setChecked(!checked);
+  };
+
+  useEffect(() => {
+    if (updateStatus === "failed") {
+      setErrors((prev) => ({ ...prev, updateError: !prev.updateError }));
+    }
+    if (deleteStatus === "failed") {
+      setErrors((prev) => ({ ...prev, deleteError: !prev.deleteError }));
+    }
+
+    setTimeout(() => {
+      if (updateStatus === "failed") {
+        setChecked(task.isComplete);
+      }
+      setErrors({ updateError: false, deleteError: false });
+    }, 3000);
+  }, [updateStatus, deleteStatus]);
+
   return (
     <Container
       className={`${styles.card} ${task.isComplete ? styles.is_completed : ""}`}
@@ -21,7 +58,9 @@ const TaskCard = ({ task }: Props) => {
       <div className={styles.card__left}>
         <FormCheck
           className={styles.checkbox}
-          defaultChecked={task.isComplete}
+          disabled={errors.updateError}
+          checked={checked}
+          onChange={handleIsCompleteChange}
         />
       </div>
 
@@ -42,18 +81,33 @@ const TaskCard = ({ task }: Props) => {
       </div>
 
       <div className={styles.card__right}>
-        <Link href={`/task/${task.id}`}>
+        {task.isComplete ? (
           <Button
+            disabled
             onClick={() => dispatch(addTask(task))}
             variant="warning"
             className={styles.card__right__edit}
           >
             <GrEdit className={styles.card__right__icons} />
           </Button>
-        </Link>
+        ) : (
+          <Link href={`/task/${task.id}`}>
+            <Button
+              onClick={() => dispatch(addTask(task))}
+              variant="warning"
+              className={styles.card__right__edit}
+            >
+              <GrEdit className={styles.card__right__icons} />
+            </Button>
+          </Link>
+        )}
+
         <Button
           variant="danger"
-          className={styles.card__right__delete}
+          className={`${styles.card__right__delete} ${
+            errors.deleteError ? styles.card__right__delete__fail : ""
+          }`}
+          disabled={errors.deleteError}
           onClick={() => dispatch(deleteTaskAsync(task.id))}
         >
           <GrTrash className={styles.card__right__icons} />

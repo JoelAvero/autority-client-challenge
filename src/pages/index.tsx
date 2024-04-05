@@ -12,12 +12,13 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { Task } from "../types";
 import TaskList from "../features/task/TaskList";
+import { Container, Spinner } from "react-bootstrap";
+import Button from "../components/Button";
 
 const IndexPage: NextPage = () => {
   const dispatch = useAppDispatch();
-  const [tasks, setTasks] = useState<Task[]>([]);
+
   const status = useAppSelector(selectTasksStatus);
   const tasksFromStore = useAppSelector(selectTasks);
 
@@ -27,34 +28,30 @@ const IndexPage: NextPage = () => {
     }
   }, [dispatch]);
 
-  useEffect(() => {
-    setTasks(tasksFromStore);
-  }, [status]);
-
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   if (status === "failed") {
-    return <div>Error al cargar las tareas</div>;
+    return <div>Error when loading tasks</div>;
   }
 
   return (
-    <>
-      {tasks.length && (
-        <div className={styles.container}>
-          <Head>
-            <title>Autority Challenge</title>
-          </Head>
-          <header className={styles.header}>
-            <TaskList tasks={tasks} />
-          </header>
-          <div>
-            <Counter />
-          </div>
-        </div>
-      )}
-    </>
+    <Container className={styles.container}>
+      <h1 className={styles.header}>Tasks App</h1>
+      <section className={styles.main__section}>
+        {tasksFromStore.length ? (
+          <>
+            <Link href="/task">
+              <Button variant="primary">CREATE TASK</Button>
+            </Link>
+            <TaskList tasks={tasksFromStore} />
+          </>
+        ) : (
+          <p>No tasks yet</p>
+        )}
+      </section>
+    </Container>
   );
 };
 

@@ -19,4 +19,7 @@ export interface TaskState {
   tasks: Task[];
   status: "idle" | "loading" | "failed";
   task: Task | undefined;
+  deleteStatus: "idle" | "loading" | "failed";
+  updateStatus: "idle" | "loading" | "failed";
+  createStatus: "idle" | "loading" | "failed";
 }

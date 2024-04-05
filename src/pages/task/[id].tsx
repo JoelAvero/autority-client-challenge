@@ -6,20 +6,18 @@ import {
   selectTasksStatus,
 } from "../../features/task/taskSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Task } from "../../types";
 import Link from "next/link";
-import Form from "../../features/task/TaskForm";
+import { Container } from "react-bootstrap";
+import styles from "../../styles/Task.module.scss";
+import Button from "../../components/Button";
+import TaskForm from "../../features/task/TaskForm";
 
-type Props = {
-  id: string;
-};
+type Props = {};
 
 const index = (props: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = router.query;
-
-  // const [task, setTask] = useState<Task | undefined>(undefined);
 
   const status = useAppSelector(selectTasksStatus);
   const taskFromStore = useAppSelector(selectTask);
@@ -29,10 +27,6 @@ const index = (props: Props) => {
       dispatch(fetchTaskAsync(id));
     }
   }, [dispatch, router]);
-
-  // useEffect(() => {
-  //   setTask(taskFromStore);
-  // }, [status]);
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -45,10 +39,12 @@ const index = (props: Props) => {
   return (
     <>
       {taskFromStore && (
-        <div>
-          <Link href="/">Home</Link>
-          <Form task={taskFromStore} />
-        </div>
+        <Container className={styles.task__container}>
+          <Link className={styles.task__link} href="/">
+            <Button variant="dark">BACK TO TASKS</Button>
+          </Link>
+          <TaskForm task={taskFromStore} />
+        </Container>
       )}
     </>
   );
