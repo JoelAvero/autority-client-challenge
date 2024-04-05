@@ -84,6 +84,9 @@ export const taskSlice = createSlice({
       .addCase(fetchTasksAsync.pending, (state) => {
         state.status = "loading";
       })
+      .addCase(fetchTasksAsync.rejected, (state) => {
+        state.status = "failed";
+      })
       .addCase(fetchTasksAsync.fulfilled, (state, action) => {
         state.status = "idle";
 
@@ -91,6 +94,9 @@ export const taskSlice = createSlice({
       })
       .addCase(fetchTaskAsync.pending, (state) => {
         state.status = "loading";
+      })
+      .addCase(fetchTaskAsync.rejected, (state) => {
+        state.status = "failed";
       })
       .addCase(fetchTaskAsync.fulfilled, (state, action) => {
         state.status = "idle";

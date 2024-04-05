@@ -32,23 +32,25 @@ const IndexPage: NextPage = () => {
     return <Spinner animation="border" />;
   }
 
-  if (status === "failed") {
-    return <div>Error when loading tasks</div>;
-  }
-
   return (
     <Container className={styles.container}>
       <h1 className={styles.header}>Tasks App</h1>
       <section className={styles.main__section}>
-        <Link href="/task">
-          <Button variant="primary">CREATE TASK</Button>
-        </Link>
-        {tasksFromStore.length ? (
-          <>
-            <TaskList tasks={tasksFromStore} />
-          </>
+        {status === "failed" ? (
+          <div>Error when loading tasks, did you start the server?</div>
         ) : (
-          <p>No tasks yet</p>
+          <>
+            <Link href="/task">
+              <Button variant="primary">CREATE TASK</Button>
+            </Link>
+            {tasksFromStore.length ? (
+              <>
+                <TaskList tasks={tasksFromStore} />
+              </>
+            ) : (
+              <p>No tasks yet</p>
+            )}
+          </>
         )}
       </section>
     </Container>

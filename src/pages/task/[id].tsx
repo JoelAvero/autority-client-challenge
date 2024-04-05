@@ -32,21 +32,21 @@ const index = (props: Props) => {
     return <Spinner animation="border" />;
   }
 
-  if (status === "failed") {
-    return <div>Error al cargar las tareas</div>;
-  }
+  const errorView = (
+    <div>
+      Error when fetching task, did you start the server? is the id valid?
+    </div>
+  );
+
+  const content = taskFromStore ? <TaskForm task={taskFromStore} /> : errorView;
 
   return (
-    <>
-      {taskFromStore && (
-        <Container className={styles.task__container}>
-          <Link className={styles.task__link} href="/">
-            <Button variant="dark">BACK TO TASKS</Button>
-          </Link>
-          <TaskForm task={taskFromStore} />
-        </Container>
-      )}
-    </>
+    <Container className={styles.task__container}>
+      <Link className={styles.task__link} href="/">
+        <Button variant="dark">BACK TO TASKS</Button>
+      </Link>
+      {status === "failed" ? errorView : content}
+    </Container>
   );
 };
 
