@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { CreateTask, Task } from "../../types";
-import { Form, FormControl, FormGroup, FormLabel } from "react-bootstrap";
+import {
+  Form,
+  FormControl,
+  FormGroup,
+  FormLabel,
+  Spinner,
+} from "react-bootstrap";
 import styles from "./task.module.scss";
 import Button from "../../components/Button";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -124,7 +130,11 @@ const TaskForm = ({ task }: Props) => {
       </FormGroup>
 
       <Button className={styles.form__button} variant="primary" type="submit">
-        {actionType}
+        {createStatus === "loading" || updateStatus === "loading" ? (
+          <Spinner size="sm" animation="border" />
+        ) : (
+          actionType
+        )}
       </Button>
     </Form>
   );
