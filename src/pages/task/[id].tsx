@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   fetchTaskAsync,
   selectTask,
@@ -7,7 +7,7 @@ import {
 } from "../../features/task/taskSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Link from "next/link";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import styles from "../../styles/Task.module.scss";
 import Button from "../../components/Button";
 import TaskForm from "../../features/task/TaskForm";
@@ -29,7 +29,7 @@ const index = (props: Props) => {
   }, [dispatch, router]);
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   if (status === "failed") {

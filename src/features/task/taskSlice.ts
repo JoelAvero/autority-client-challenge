@@ -17,6 +17,7 @@ const initialState: TaskState = {
   deleteStatus: "idle",
   updateStatus: "idle",
   createStatus: "idle",
+  taskUpdated: false,
 };
 
 export const fetchTasksAsync = createAsyncThunk(
@@ -74,6 +75,9 @@ export const taskSlice = createSlice({
     addTask: (state, action) => {
       state.task = action.payload;
     },
+    setTaskUpdated: (state, action) => {
+      state.taskUpdated = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -100,6 +104,7 @@ export const taskSlice = createSlice({
       })
       .addCase(updateTaskAsync.fulfilled, (state, action) => {
         state.updateStatus = "idle";
+        state.taskUpdated = true;
       })
       .addCase(updateTaskStatusAsync.pending, (state) => {
         state.updateStatus = "loading";
@@ -137,7 +142,7 @@ export const taskSlice = createSlice({
   },
 });
 
-export const { addTask } = taskSlice.actions;
+export const { addTask, setTaskUpdated } = taskSlice.actions;
 
 export const selectTasks = (state: AppState): Task[] => {
   return state.task.tasks.slice().sort((task1, task2) => {
@@ -159,5 +164,7 @@ export const selectDeleteStatus = (state: AppState): string =>
   state.task.deleteStatus;
 export const selectCreateStatus = (state: AppState): string =>
   state.task.createStatus;
+export const selectTaskUpdated = (state: AppState): boolean =>
+  state.task.taskUpdated;
 
 export default taskSlice.reducer;

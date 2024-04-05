@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { CreateTask, Task } from "../../types";
-import {
-  Form,
-  FormControl,
-  FormGroup,
-  FormLabel,
-  FormText,
-} from "react-bootstrap";
+import { Form, FormControl, FormGroup, FormLabel } from "react-bootstrap";
 import styles from "./task.module.scss";
 import Button from "../../components/Button";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   createTaskAsync,
-  fetchTaskAsync,
   fetchTasksAsync,
   selectCreateStatus,
   selectUpdateStatus,
+  setTaskUpdated,
   updateTaskAsync,
 } from "./taskSlice";
 import { useRouter } from "next/router";
@@ -36,7 +30,7 @@ const TaskForm = ({ task }: Props) => {
 
   const actionType = "id" in task ? "EDIT" : "CREATE";
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
@@ -45,10 +39,9 @@ const TaskForm = ({ task }: Props) => {
       return;
     } else {
       if (actionType === "EDIT") {
-        await dispatch(updateTaskAsync(newTask as Task));
-        dispatch(fetchTasksAsync());
+        dispatch(updateTaskAsync(newTask as Task));
       } else {
-        await dispatch(createTaskAsync(newTask as CreateTask));
+        dispatch(createTaskAsync(newTask as CreateTask));
       }
       setActionCompleted(true);
     }
@@ -56,14 +49,18 @@ const TaskForm = ({ task }: Props) => {
 
   useEffect(() => {
     if (actionCompleted && createStatus === "idle") {
+      dispatch(setTaskUpdated(true));
       router.push("/");
     }
   }, [createStatus]);
 
   useEffect(() => {
     if (actionCompleted && updateStatus === "idle") {
+      dispatch(setTaskUpdated(true));
       router.push("/");
     }
+
+    return () => {};
   }, [updateStatus]);
 
   if (createStatus === "failed" || updateStatus === "failed") {

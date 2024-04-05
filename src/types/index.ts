@@ -22,4 +22,5 @@ export interface TaskState {
   deleteStatus: "idle" | "loading" | "failed";
   updateStatus: "idle" | "loading" | "failed";
   createStatus: "idle" | "loading" | "failed";
+  taskUpdated: boolean;
 }

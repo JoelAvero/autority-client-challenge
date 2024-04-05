@@ -1,16 +1,14 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-
 import styles from "../styles/Home.module.css";
-import Counter from "../features/counter-reference-redux/Counter";
 import {
-  addTask,
   fetchTasksAsync,
+  selectTaskUpdated,
   selectTasks,
   selectTasksStatus,
+  setTaskUpdated,
 } from "../features/task/taskSlice";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import TaskList from "../features/task/TaskList";
 import { Container, Spinner } from "react-bootstrap";
@@ -21,10 +19,12 @@ const IndexPage: NextPage = () => {
 
   const status = useAppSelector(selectTasksStatus);
   const tasksFromStore = useAppSelector(selectTasks);
+  const taskUpdated = useAppSelector(selectTaskUpdated);
 
   useEffect(() => {
-    if (tasksFromStore.length === 0) {
+    if (tasksFromStore.length === 0 || taskUpdated) {
       dispatch(fetchTasksAsync());
+      dispatch(setTaskUpdated(false));
     }
   }, [dispatch]);
 
