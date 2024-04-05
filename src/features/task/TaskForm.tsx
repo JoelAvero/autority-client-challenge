@@ -88,6 +88,7 @@ const TaskForm = ({ task }: Props) => {
           required
           type="name"
           name="name"
+          maxLength={30}
           placeholder="Write some name for the task"
           value={newTask.name}
           onChange={(e) => {
@@ -95,6 +96,9 @@ const TaskForm = ({ task }: Props) => {
           }}
         />
         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">
+          Name is required and max length is 30
+        </Form.Control.Feedback>
       </FormGroup>
 
       <FormGroup className="" controlId="description">
@@ -112,6 +116,9 @@ const TaskForm = ({ task }: Props) => {
           }}
         />
         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">
+          Description is required
+        </Form.Control.Feedback>
       </FormGroup>
 
       <FormGroup className="" controlId="author">
@@ -121,12 +128,16 @@ const TaskForm = ({ task }: Props) => {
           type="text"
           name="author"
           placeholder="Enter your name"
+          maxLength={30}
           value={newTask.author}
           onChange={(e) => {
             setNewTask({ ...newTask, author: e.target.value });
           }}
         />
         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">
+          Author is required and max length is 30
+        </Form.Control.Feedback>
       </FormGroup>
 
       <Button className={styles.form__button} variant="primary" type="submit">
