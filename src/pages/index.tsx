@@ -40,11 +40,11 @@ const IndexPage: NextPage = () => {
     <Container className={styles.container}>
       <h1 className={styles.header}>Tasks App</h1>
       <section className={styles.main__section}>
+        <Link href="/task">
+          <Button variant="primary">CREATE TASK</Button>
+        </Link>
         {tasksFromStore.length ? (
           <>
-            <Link href="/task">
-              <Button variant="primary">CREATE TASK</Button>
-            </Link>
             <TaskList tasks={tasksFromStore} />
           </>
         ) : (
